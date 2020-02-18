@@ -95,21 +95,31 @@
                 label: "Tentativa XX",
                 fill: false,
                 lineTension: 0,
-                backgroundColor: "rgba(255,99,132,0.2)", // cor do grafico
-                borderColor: "rgba(255,99,132,1)",
+                borderColor: "rgba(255,99,132,1)", //cor da linha
                 borderWidth: 2,
-                data: [65, 59, 20, 81, 56, 55, 40, 41, 42],
+                data: [65, 59, 20, 20, 56, 55, 40, 41, 42],
+            }, {
+                label: "Tentativa YY",
+                fill: false,
+                lineTension: 0,
+                borderColor: "rgba(40,100,200,1)", //cor da linha
+                borderWidth: 2,
+                data: [65, 11, 15, 20, 30, 40, 50, 60, 42],
             }]
+
         };
 
         var options = {
             maintainAspectRatio: false,
             scales: {
                 yAxes: [{
-                    stacked: true,
+                    stacked: false,
                     gridLines: {
                         display: true,
                         color: "rgba(255,99,132,0.2)" //cor da linha de fundo
+                    },
+                    ticks: {
+                        beginAtZero: true
                     }
                 }],
                 xAxes: [{
@@ -124,6 +134,7 @@
             options: options,
             data: data
         });
+
     </script>
 
 </body>
