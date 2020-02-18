@@ -29,13 +29,6 @@
         width: 80vw;
     }
 
-    .dialog {
-        border: 1px solid gray;
-        width: 300px;
-        margin-top: 1pc;
-        padding: 5px;
-    }
-
     .control {
         position: relative;
         margin: auto;
@@ -63,12 +56,6 @@
 <body>
 
     <script src="node_modules/chart.js/dist/Chart.js"></script>
-    <script src="scripts/dialogs.js"></script>
-
-    <?php
-    include_once "bd/conexaobd.php";
-    $conexao = conectar();
-    ?>
 
     <div class="control clearfix">
         <form action="index.php" method="get">
@@ -132,9 +119,34 @@
                     </div>
                 </div>
             </fieldset>
-            <div style="margin-top: 10px;" class="clearfix float-left">
-                    <input type="submit" value="Atualizar">
+            <fieldset style="margin-left: 1pc;">
+                <legend>Linha do tempo</legend>
+                <div style="width: 100%;" class="clearfix">
+                    <div class="float-left">
+                        <div>
+                            <label for="start">Iniciar em: </label>
+                        </div>
+                        <div>
+                            <label for="start">Terminar em: </label>
+                        </div>
+                    </div>
+                    <div class="float-left">
+                        <div>
+                            <input type="number" step="0.00001" id="start"> <br>
+                        </div>
+                        <div>
+                            <input type="number" step="0.00001" id="finish">
+                        </div>
+                    </div>
                 </div>
+                <div>
+                    <br>
+                    <input type="button" value="Resetar">
+                </div>
+            </fieldset>
+            <div style="margin-top: 10px;" class="clearfix float-left">
+                <input type="submit" value="Atualizar">
+            </div>
         </form>
     </div>
 
@@ -145,25 +157,58 @@
         <canvas id="chart"></canvas>
     </div>
 
+    <?php
+
+    include_once "bd/conexaobd.php";
+    include_once "gerarDados.php";
+
+    $string = generateString();
+    $data = generateData();
+    $qntString = stringCount();
+    $qntArrays = arraysCount();
+
+    ?>
+
     <script>
         var data = {
-            labels: ["0s", "1s", "2s", "3s", "4s", "5s", "6s", "8s", "9s"],
-            datasets: [{
-                label: "Tentativa XX",
-                fill: false,
-                lineTension: 0,
-                borderColor: "rgba(255,99,132,1)", //cor da linha
-                borderWidth: 2,
-                data: [65, 59, 20, 20, 56, 55, 40, 41, 42],
-            }, {
-                label: "Tentativa YY",
-                fill: false,
-                lineTension: 0,
-                borderColor: "rgba(40,100,200,1)", //cor da linha
-                borderWidth: 2,
-                data: [65, 11, 15, 20, 30, 40, 50, 60, 42],
-            }]
+            labels: [<?php echo $string ?>],
+            datasets: [
 
+                <?php
+
+                $qntString += 6;
+
+                for ($q = 0; $q < $qntArrays; $q++) {
+
+                    $nome = $data[$q][0];
+                    $r = $data[$q][2];
+                    $g = $data[$q][3];
+                    $b = $data[$q][4];
+                    $i = $data[$q][5];
+
+                    echo "
+                    {
+                        label: '$nome',
+                        fill: false,
+                        lineTension: 0,
+                        borderColor: 'rgba($r,$g,$b,$i)', //cor da linha
+                        borderWidth: 2,
+                        data: [
+                    ";
+                    for ($i = 6; $i < $qntString; $i++) {
+                        echo $data[$q][$i];
+                        echo ", ";
+                    }
+
+                    echo "]}";
+
+                    if ($q != $qntArrays - 1) {
+                        echo ",";
+                    }
+                }
+
+                ?>
+            ]
         };
 
         var options = {

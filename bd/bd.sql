@@ -19,6 +19,7 @@ USE `telemetriabd` ;
 CREATE TABLE IF NOT EXISTS `telemetriabd`.`master` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `tentativa` INT NOT NULL,
+  `tempo` TIME NOT NULL,
   `setor` INT NOT NULL,
   `velocidadeDesejada` INT NOT NULL,
   `velocidadeMotorEsquerdo` INT NOT NULL,
@@ -35,5 +36,3 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
-select * from master;
