@@ -55,68 +55,87 @@
 
 <body>
 
+    <?php
+    include_once "bd/conexaobd.php";
+    include_once "gerarDados.php";
+    ?>
+
     <script src="node_modules/chart.js/dist/Chart.js"></script>
 
     <div class="control clearfix">
         <form action="index.php" method="get">
+            
             <fieldset>
                 <legend>Informações eixo Y</legend>
+                <?php 
+                $resultsInfo = getFieldsInfo(); 
+                echo $resultsInfo["1"];?>
                 <div style="width: 100%;">
                     <div class="float-left">
-                        <input type="checkbox" id="1a" name="velocidadeDesejada">
+                        <input type="checkbox" id="1a" name="velocidadeDesejada" <?php echo $resultsInfo["velocidadeDesejada"]?>>
                         <label for="1a">Velocidade Desejada</label> <br>
-                        <input type="checkbox" id="2a" name="velocidadeMotorEsquerdo">
+                        <input type="checkbox" id="2a" name="velocidadeMotorEsquerdo" <?php echo $resultsInfo["velocidadeMotorEsquerdo"]?>>
                         <label for="2a">Velocidade Motor Esquerdo</label> <br>
-                        <input type="checkbox" id="3a" name="velocidadeMotorDireito">
+                        <input type="checkbox" id="3a" name="velocidadeMotorDireito" <?php echo $resultsInfo["velocidadeMotorDireito"]?>>
                         <label for="3a">Velocidade Motor Direito</label> <br>
-                        <input type="checkbox" id="4a" name="erroAcumulado">
+                        <input type="checkbox" id="4a" name="erroAcumulado" <?php echo $resultsInfo["erroAcumulado"]?>>
                         <label for="4a">Erro Acumulado</label>
                     </div>
                     <div class="float-left">
-                        <input type="checkbox" id="5a" name="erro">
+                        <input type="checkbox" id="5a" name="erro" <?php echo $resultsInfo["erro"]?>>
                         <label for="5a">Erro</label> <br>
-                        <input type="checkbox" id="6a" name="p">
+                        <input type="checkbox" id="6a" name="p" <?php echo $resultsInfo["p"]?>>
                         <label for="6a">P</label> <br>
-                        <input type="checkbox" id="7a" name="d">
+                        <input type="checkbox" id="7a" name="d" <?php echo $resultsInfo["d"]?>>
                         <label for="7a">D</label> <br>
-                        <input type="checkbox" id="8a" name="i">
+                        <input type="checkbox" id="8a" name="i" <?php echo $resultsInfo["i"]?>>
                         <label for="8a">I</label> <br>
                     </div>
                 </div>
             </fieldset>
+            <?php
+            ?>
             <fieldset style="margin-left: 1pc;">
                 <legend>Tentativas</legend>
                 <div style="width: 100%;">
-                    <div class="float-left">
-                        <input type="checkbox" id="1" name="tentativa">
-                        <label for="1">Tentativa X</label> <br>
-                        <input type="checkbox" id="2" name="tentativa">
-                        <label for="2">Tentativa X</label> <br>
-                        <input type="checkbox" id="3" name="tentativa">
-                        <label for="3">Tentativa X</label> <br>
-                        <input type="checkbox" id="4" name="tentativa">
-                        <label for="4">Tentativa X</label>
-                    </div>
-                    <div class="float-left">
-                        <input type="checkbox" id="5" name="tentativa">
-                        <label for="5">Tentativa X</label> <br>
-                        <input type="checkbox" id="6" name="tentativa">
-                        <label for="6">Tentativa X</label> <br>
-                        <input type="checkbox" id="7" name="tentativa">
-                        <label for="7">Tentativa X</label> <br>
-                        <input type="checkbox" id="8" name="tentativa">
-                        <label for="8">Tentativa X</label> <br>
-                    </div>
-                    <div class="float-left">
-                        <input type="checkbox" id="9" name="tentativa">
-                        <label for="9">Tentativa X</label> <br>
-                        <input type="checkbox" id="10" name="tentativa">
-                        <label for="10">Tentativa X</label> <br>
-                        <input type="checkbox" id="11" name="tentativa">
-                        <label for="11">Tentativa X</label> <br>
-                        <input type="checkbox" id="12" name="tentativa">
-                        <label for="12">Tentativa X</label> <br>
-                    </div>
+
+                    <?php
+                    $conexao = conectar();
+
+                    $sql = "SELECT DISTINCT tentativa AS numtent FROM master";
+                    $result = mysqli_query($conexao, $sql);
+
+                    $count = 0;
+
+                    if (mysqli_num_rows($result) == 0) {
+                        echo 'Não há dados cadastrados.';
+                    }
+
+                    echo "<div class='float-left'>";
+                    
+                    while ($registro = mysqli_fetch_assoc($result)) {
+                        $count++;
+
+                        $id = $registro['numtent'];
+
+                        echo "
+                        <input type='checkbox' id='$id' name='tentativa$id'>
+                        <label for='$id'>Tentativa $id</label> <br>
+                        ";
+
+                        if(($count % 4) == 0){
+                            echo "
+                            </div>
+                            <div class='float-left'>
+                            ";
+                        }
+
+                        if(intval($tempo / 4) == 0){
+
+                        }
+                    }
+                    ?>
+                    
                 </div>
             </fieldset>
             <fieldset style="margin-left: 1pc;">
@@ -158,9 +177,6 @@
     </div>
 
     <?php
-
-    include_once "bd/conexaobd.php";
-    include_once "gerarDados.php";
 
     $string = generateString();
     $data = generateData();
