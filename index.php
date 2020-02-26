@@ -5,59 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telemetria</title>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
 </head>
-
-<style>
-    body {
-        padding: 16px;
-    }
-
-    .clearfix {
-        overflow: auto;
-    }
-
-    .clearfix::after {
-        content: "";
-        clear: both;
-        display: table;
-    }
-
-    .chart-container {
-        position: relative;
-        margin: auto;
-        height: 60vh;
-        width: 80vw;
-    }
-
-    .control {
-        position: relative;
-        margin: auto;
-        width: 80vw;
-    }
-
-    .control fieldset {
-        max-width: 47%;
-        float: left;
-    }
-
-    .float-left {
-        float: left;
-    }
-
-    #addDataset {
-        display: none;
-    }
-
-    #rmDataset {
-        display: none;
-    }
-</style>
 
 <body>
 
     <?php
     include_once "bd/conexaobd.php";
     include_once "gerarDados.php";
+
+    //-------------------------------------
+    $data = new data();
+    $data->generateData(); //gerar o treco funcionante com ou sem dados de exemplo
+    //-------------------------------------
+
     ?>
 
     <script src="node_modules/chart.js/dist/Chart.js"></script>
@@ -70,25 +31,28 @@
                 <?php 
                 $resultsInfo = getFieldsInfo(); 
                 echo $resultsInfo["1"];?>
+
+                <!-- atualmente mostrando apenas erro acumulado -->
+
                 <div style="width: 100%;">
                     <div class="float-left">
-                        <input type="checkbox" id="1a" name="velocidadeDesejada" <?php echo $resultsInfo["velocidadeDesejada"]?>>
+                        <input disabled type="checkbox" id="1a" name="velocidadeDesejada" <?php echo $resultsInfo["velocidadeDesejada"]?>>
                         <label for="1a">Velocidade Desejada</label> <br>
-                        <input type="checkbox" id="2a" name="velocidadeMotorEsquerdo" <?php echo $resultsInfo["velocidadeMotorEsquerdo"]?>>
+                        <input disabled type="checkbox" id="2a" name="velocidadeMotorEsquerdo" <?php echo $resultsInfo["velocidadeMotorEsquerdo"]?>>
                         <label for="2a">Velocidade Motor Esquerdo</label> <br>
-                        <input type="checkbox" id="3a" name="velocidadeMotorDireito" <?php echo $resultsInfo["velocidadeMotorDireito"]?>>
+                        <input disabled type="checkbox" id="3a" name="velocidadeMotorDireito" <?php echo $resultsInfo["velocidadeMotorDireito"]?>>
                         <label for="3a">Velocidade Motor Direito</label> <br>
-                        <input type="checkbox" id="4a" name="erroAcumulado" <?php echo $resultsInfo["erroAcumulado"]?>>
+                        <input checked type="checkbox" id="4a" name="erroAcumulado" <?php echo $resultsInfo["erroAcumulado"]?>>
                         <label for="4a">Erro Acumulado</label>
                     </div>
                     <div class="float-left">
-                        <input type="checkbox" id="5a" name="erro" <?php echo $resultsInfo["erro"]?>>
+                        <input disabled type="checkbox" id="5a" name="erro" <?php echo $resultsInfo["erro"]?>>
                         <label for="5a">Erro</label> <br>
-                        <input type="checkbox" id="6a" name="p" <?php echo $resultsInfo["p"]?>>
+                        <input disabled type="checkbox" id="6a" name="p" <?php echo $resultsInfo["p"]?>>
                         <label for="6a">P</label> <br>
-                        <input type="checkbox" id="7a" name="d" <?php echo $resultsInfo["d"]?>>
+                        <input disabled type="checkbox" id="7a" name="d" <?php echo $resultsInfo["d"]?>>
                         <label for="7a">D</label> <br>
-                        <input type="checkbox" id="8a" name="i" <?php echo $resultsInfo["i"]?>>
+                        <input disabled type="checkbox" id="8a" name="i" <?php echo $resultsInfo["i"]?>>
                         <label for="8a">I</label> <br>
                     </div>
                 </div>
@@ -117,9 +81,14 @@
                         $count++;
 
                         $id = $registro['numtent'];
+                        $tentCheck = $_GET["tentativa$id"];
+                        if($tentCheck != ""){
+                            $tentCheck = "checked";
+                            $data->addData($id); //esse id é da tentativa
+                        } 
 
                         echo "
-                        <input type='checkbox' id='$id' name='tentativa$id'>
+                        <input type='checkbox' id='$id' name='tentativa$id' $tentCheck>
                         <label for='$id'>Tentativa $id</label> <br>
                         ";
 
@@ -134,6 +103,7 @@
 
                         }
                     }
+
                     ?>
                     
                 </div>
@@ -176,12 +146,15 @@
         <canvas id="chart"></canvas>
     </div>
 
+    <!------------ GERAR GRAFICO ------------>
+
     <?php
 
+    //gerar o necessario para usar no grafico 
     $string = generateString();
-    $data = generateData();
     $qntString = stringCount();
     $qntArrays = arraysCount();
+    $data = $data->getData();
 
     ?>
 
@@ -252,6 +225,7 @@
             options: options,
             data: data
         });
+
     </script>
 
 </body>

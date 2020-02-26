@@ -38,7 +38,8 @@
     }
 
     for ($tempo = 1; $tempo <= 9; $tempo++) {
-        $values = "('" . $tentativa . "', '" . $tempo . "', '" . gerarSetor($tempo) . "', '"
+        $tempoComplete = date("Y-m-d") . " 00:00:00.00" . $tempo;
+        $values = "('" . $tentativa . "', '" . $tempoComplete . "', '" . gerarSetor($tempo) . "', '"
             . rand(95, 100) . "', '" . rand(95, 100) . "', '" . rand(95, 100) . "', '" . rand(1, 50) / 100 . "', '"
             . rand(1, 10) / 100 . "', '" . rand(90, 100) / 100 . "', '" . rand(0, 40) . "', '" . rand(0, 40) . "')";
         $sql = "INSERT INTO `telemetriabd`.`master` (`tentativa`, `tempo`, `setor`, `velocidadeDesejada`, `velocidadeMotorEsquerdo`, `velocidadeMotorDireito`, `p`, `d`, `i`, `erro`, `erroAcumulado`) 

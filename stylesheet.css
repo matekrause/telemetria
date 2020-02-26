@@ -1,0 +1,43 @@
+body {
+    padding: 16px;
+}
+
+.clearfix {
+    overflow: auto;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 60vh;
+    width: 80vw;
+}
+
+.control {
+    position: relative;
+    margin: auto;
+    width: 80vw;
+}
+
+.control fieldset {
+    max-width: 47%;
+    float: left;
+}
+
+.float-left {
+    float: left;
+}
+
+#addDataset {
+    display: none;
+}
+
+#rmDataset {
+    display: none;
+}
