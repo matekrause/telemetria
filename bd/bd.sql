@@ -38,6 +38,12 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 SELECT MAX(tentativa) FROM master;
+SELECT MIN(tempo) FROM master WHERE tentativa = 1;
+SELECT TIMESTAMPDIFF(MICROSECOND, (SELECT MAX(tempo) FROM master WHERE tentativa = 1) , (SELECT MIN(tempo) FROM master WHERE tentativa = 1)) / 1000;
+SELECT CAST('2020-02-26 00:00:00.001' AS TIME);
+SELECT COUNT(tempo) from master WHERE tentativa = '1';
+
+
 DELETE FROM master WHERE id IS NOT NULL;
 SELECT DISTINCT tentativa AS numtent FROM master;
 

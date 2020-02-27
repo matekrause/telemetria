@@ -16,7 +16,7 @@
 
     //-------------------------------------
     $data = new data();
-    $data->generateData(); //gerar o treco funcionante com ou sem dados de exemplo
+    $data->createData(); //gerar o treco funcionante com ou sem dados de exemplo
     //-------------------------------------
 
     ?>
@@ -25,34 +25,35 @@
 
     <div class="control clearfix">
         <form action="index.php" method="get">
-            
+
             <fieldset>
                 <legend>Informações eixo Y</legend>
-                <?php 
-                $resultsInfo = getFieldsInfo(); 
-                echo $resultsInfo["1"];?>
+                <?php
+                $resultsInfo = getFieldsInfo();
+                $resultsInfoArray = getFieldsInfoArray();
+                ?>
 
                 <!-- atualmente mostrando apenas erro acumulado -->
 
                 <div style="width: 100%;">
                     <div class="float-left">
-                        <input disabled type="checkbox" id="1a" name="velocidadeDesejada" <?php echo $resultsInfo["velocidadeDesejada"]?>>
+                        <input type="checkbox" id="1a" name="velocidadeDesejada" <?php echo $resultsInfo["velocidadeDesejada"] ?>>
                         <label for="1a">Velocidade Desejada</label> <br>
-                        <input disabled type="checkbox" id="2a" name="velocidadeMotorEsquerdo" <?php echo $resultsInfo["velocidadeMotorEsquerdo"]?>>
+                        <input type="checkbox" id="2a" name="velocidadeMotorEsquerdo" <?php echo $resultsInfo["velocidadeMotorEsquerdo"] ?>>
                         <label for="2a">Velocidade Motor Esquerdo</label> <br>
-                        <input disabled type="checkbox" id="3a" name="velocidadeMotorDireito" <?php echo $resultsInfo["velocidadeMotorDireito"]?>>
+                        <input type="checkbox" id="3a" name="velocidadeMotorDireito" <?php echo $resultsInfo["velocidadeMotorDireito"] ?>>
                         <label for="3a">Velocidade Motor Direito</label> <br>
-                        <input checked type="checkbox" id="4a" name="erroAcumulado" <?php echo $resultsInfo["erroAcumulado"]?>>
+                        <input type="checkbox" id="4a" name="erroAcumulado" <?php echo $resultsInfo["erroAcumulado"] ?>>
                         <label for="4a">Erro Acumulado</label>
                     </div>
                     <div class="float-left">
-                        <input disabled type="checkbox" id="5a" name="erro" <?php echo $resultsInfo["erro"]?>>
+                        <input type="checkbox" id="5a" name="erro" <?php echo $resultsInfo["erro"] ?>>
                         <label for="5a">Erro</label> <br>
-                        <input disabled type="checkbox" id="6a" name="p" <?php echo $resultsInfo["p"]?>>
+                        <input type="checkbox" id="6a" name="p" <?php echo $resultsInfo["p"] ?>>
                         <label for="6a">P</label> <br>
-                        <input disabled type="checkbox" id="7a" name="d" <?php echo $resultsInfo["d"]?>>
+                        <input type="checkbox" id="7a" name="d" <?php echo $resultsInfo["d"] ?>>
                         <label for="7a">D</label> <br>
-                        <input disabled type="checkbox" id="8a" name="i" <?php echo $resultsInfo["i"]?>>
+                        <input type="checkbox" id="8a" name="i" <?php echo $resultsInfo["i"] ?>>
                         <label for="8a">I</label> <br>
                     </div>
                 </div>
@@ -76,36 +77,38 @@
                     }
 
                     echo "<div class='float-left'>";
-                    
+
+                    $tentativasArray = array();
+
                     while ($registro = mysqli_fetch_assoc($result)) {
                         $count++;
 
                         $id = $registro['numtent'];
                         $tentCheck = $_GET["tentativa$id"];
-                        if($tentCheck != ""){
+                        if ($tentCheck != "") {
                             $tentCheck = "checked";
-                            $data->addData($id); //esse id é da tentativa
-                        } 
+                            array_push($tentativasArray, $id);
+                            $data->addData($id, $resultsInfoArray); //adiciona a info da tent no array
+                        }
 
                         echo "
                         <input type='checkbox' id='$id' name='tentativa$id' $tentCheck>
                         <label for='$id'>Tentativa $id</label> <br>
                         ";
 
-                        if(($count % 4) == 0){
+                        if (($count % 4) == 0) {
                             echo "
                             </div>
                             <div class='float-left'>
                             ";
                         }
+                    }
 
-                        if(intval($tempo / 4) == 0){
-
-                        }
+                    if (intval($tempo / 4) == 0) {
                     }
 
                     ?>
-                    
+
                 </div>
             </fieldset>
             <fieldset style="margin-left: 1pc;">
@@ -151,9 +154,9 @@
     <?php
 
     //gerar o necessario para usar no grafico 
-    $string = generateString();
-    $qntString = stringCount();
-    $qntArrays = arraysCount();
+    $string = generateString($tentativasArray);
+    $qntString = stringCount($tentativasArray);
+    $qntArrays = arraysCount($data);
     $data = $data->getData();
 
     ?>
@@ -210,7 +213,7 @@
                         color: "rgba(255,99,132,0.2)" //cor da linha de fundo
                     },
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: false
                     }
                 }],
                 xAxes: [{
@@ -225,7 +228,6 @@
             options: options,
             data: data
         });
-
     </script>
 
 </body>

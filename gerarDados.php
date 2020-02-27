@@ -1,7 +1,5 @@
 <?php
 
-$conexao = conectar();
-
 // EXEMPLO DE DADOS VALIDOS
 // $string = "'0s', '1s', '2s', '3s', '4s', '5s', '6s', '8s', '9s'";
 // $data = array(
@@ -18,7 +16,7 @@ class data
 {
     public $data;
 
-    function generateData()
+    function createData()
     {
         $this->data = array(
             // inserir dados de exemplo aqui
@@ -29,27 +27,30 @@ class data
         );
     }
 
-    function addData($idTentativa)
+    function addData($idTentativa, $resultsInfoArray)
     {
         $conexao = conectar();
-        $busca = "erroAcumulado";
-        $sql = "SELECT $busca FROM master WHERE tentativa = '$idTentativa'";
-        $result = mysqli_query($conexao, $sql);
-        $name = "Nome X";
 
-        //cor de perfil
-        $r = rand(0,255);
-        $g = rand(0,255);
-        $b = rand(0,255);
+        foreach ($resultsInfoArray as $atualValue) {
+            $busca = $atualValue;
+            $sql = "SELECT $busca FROM master WHERE tentativa = '$idTentativa'";
+            $result = mysqli_query($conexao, $sql);
+            $name = "Tentativa $idTentativa";
 
-        $values = array($name, 1, 0, $r, $g, $b);
+            //cor de perfil
+            $r = rand(0, 255);
+            $g = rand(0, 255);
+            $b = rand(0, 255);
 
-        while ($registro = mysqli_fetch_assoc($result)) {
-            //$values .= ", " . $registro["$busca"];
-            array_push($values, $registro["$busca"]);
+            $values = array($name, 1, 0, $r, $g, $b);
+
+            while ($registro = mysqli_fetch_assoc($result)) {
+                //$values .= ", " . $registro["$busca"];
+                array_push($values, $registro["$busca"]);
+            }
+
+            array_push($this->data, $values);
         }
-
-        array_push($this->data, $values);
     }
 
     function getData()
@@ -81,7 +82,7 @@ function getFieldsInfo()
         "i" => "",
     ];
 
-    if ($velocidadeDesejada != "") $resultsInfo[""] = "checked";
+    if ($velocidadeDesejada != "") $resultsInfo["velocidadeDesejada"] = "checked";
     if ($velocidadeMotorEsquerdo != "") $resultsInfo["velocidadeMotorEsquerdo"] = "checked";
     if ($velocidadeMotorDireito != "") $resultsInfo["velocidadeMotorDireito"] = "checked";
     if ($erroAcumulado != "") $resultsInfo["erroAcumulado"] = "checked";
@@ -95,19 +96,87 @@ function getFieldsInfo()
     //percebi que não é a forma mais facil de fazer mas to com preguiça de terminar
 }
 
-function generateString()
+function getFieldsInfoArray()
 {
-    return "'0s', '1s', '2s', '3s', '4s', '5s', '6s', '8s', '9s'";
+
+    $velocidadeDesejada = $_GET["velocidadeDesejada"];
+    $velocidadeMotorEsquerdo = $_GET["velocidadeMotorEsquerdo"];
+    $velocidadeMotorDireito = $_GET["velocidadeMotorDireito"];
+    $erroAcumulado = $_GET["erroAcumulado"];
+    $erro = $_GET["erro"];
+    $p = $_GET["p"];
+    $d = $_GET["d"];
+    $i = $_GET["i"];
+
+    $arrayFields = array();
+
+    if ($velocidadeDesejada != "") array_push($arrayFields, "velocidadeDesejada");
+    if ($velocidadeMotorEsquerdo != "") array_push($arrayFields, "velocidadeMotorEsquerdo");
+    if ($velocidadeMotorDireito != "") array_push($arrayFields, "velocidadeMotorDireito");
+    if ($erroAcumulado != "") array_push($arrayFields, "erroAcumulado");
+    if ($erro != "") array_push($arrayFields, "erro");
+    if ($p != "") array_push($arrayFields, "p");
+    if ($d != "") array_push($arrayFields, "d");
+    if ($i != "") array_push($arrayFields, "i");
+
+    return $arrayFields;
 }
 
-function stringCount()
+
+function generateString($tentativasArray)
+{
+
+    $conexao = conectar();
+
+    $previous = 0;
+
+    foreach ($tentativasArray as $tentativa) {
+        $sql = "SELECT TIMESTAMPDIFF(MICROSECOND, (SELECT MAX(tempo) FROM master WHERE $tentativa = 1) , (SELECT MIN(tempo) FROM master WHERE $tentativa = 1)) / 1000;";
+        $result = mysqli_query($conexao, $sql);
+
+        if ($result > $previous) {
+            $biggerTentativa = $tentativa;
+        }
+    }
+
+    $sql = "SELECT tempo FROM master WHERE tentativa = $biggerTentativa";
+    $result = mysqli_query($conexao, $sql);
+
+    while ($registro = mysqli_fetch_assoc($result)) {
+        $string .= "'" . $registro["tempo"] . "', ";
+    }
+
+    $string = substr($string, 0, -2);
+
+    return $string;
+}
+
+function stringCount($tentativasArray)
 {
     //retornar quantidade de elementos na $string (gerado no index utilizando generateString())
-    return 9;
+    $conexao = conectar();
+
+    $previous = 0;
+
+    foreach ($tentativasArray as $tentativa) {
+        $sql = "SELECT TIMESTAMPDIFF(MICROSECOND, (SELECT MAX(tempo) FROM master WHERE $tentativa = 1) , (SELECT MIN(tempo) FROM master WHERE $tentativa = 1)) / 1000;";
+        $result = mysqli_query($conexao, $sql);
+
+        if ($result > $previous) {
+            $biggerTentativa = $tentativa;
+        }
+    }
+
+    $sql = "SELECT COUNT(tempo) AS numero FROM master WHERE tentativa = '$biggerTentativa'";
+    $result = mysqli_query($conexao, $sql);
+    $resposta = mysqli_fetch_assoc($result);
+
+    return $resposta["numero"];
 }
 
-function arraysCount()
+function arraysCount($data)
 {
-    //retornar quantidade de linhas no array #data (gerado no index utilizando generateData())
-    return 6;
+    //retornar quantidade de linhas no array #data (gerado no index utilizando createData())
+    $array = $data->getData();
+    return count($array);
 }
