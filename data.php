@@ -5,7 +5,8 @@ class Data
     private $data;
     public $maxValue;
 
-    function createData()
+    //construtor que cria o array data e adiciona dados iniciais
+    function __construct()
     {
         $this->data = array(
             // inserir dados de exemplo aqui

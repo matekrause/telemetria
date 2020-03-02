@@ -17,7 +17,6 @@
 
     //-------------------------------------
     $data = new Data();
-    $data->createData(); //gerar o treco funcionante com ou sem dados de exemplo
     //-------------------------------------
 
     ?>
