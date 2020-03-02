@@ -11,54 +11,6 @@
 // $qntString = 9;
 // $qntArrays = 4;
 
-
-class data
-{
-    public $data;
-
-    function createData()
-    {
-        $this->data = array(
-            // inserir dados de exemplo aqui
-            // array("Nome A", 1, 0, 255, 200, 1, 65, 54, 35, 10, 46, 10, 50, 20, 42),
-            // array("Nome B", 1, 100, 0, 255, 1, 60, 57, 36, 30, 56, 45, 40, 10, 45),
-            // array("Nome C", 1, 200, 100, 0, 1, 65, 50, 37, 40, 66, 44, 30, 12, 50),
-            // array("Nome D", 1, 255, 200, 100, 1, 10, 20, 30, 20, 30, 20, 40, 50, 0)
-        );
-    }
-
-    function addData($idTentativa, $resultsInfoArray)
-    {
-        $conexao = conectar();
-
-        foreach ($resultsInfoArray as $atualValue) {
-            $busca = $atualValue;
-            $sql = "SELECT $busca FROM master WHERE tentativa = '$idTentativa'";
-            $result = mysqli_query($conexao, $sql);
-            $name = "Tentativa $idTentativa";
-
-            //cor de perfil
-            $r = rand(0, 255);
-            $g = rand(0, 255);
-            $b = rand(0, 255);
-
-            $values = array($name, 1, 0, $r, $g, $b);
-
-            while ($registro = mysqli_fetch_assoc($result)) {
-                //$values .= ", " . $registro["$busca"];
-                array_push($values, $registro["$busca"]);
-            }
-
-            array_push($this->data, $values);
-        }
-    }
-
-    function getData()
-    {
-        return $this->data;
-    }
-}
-
 function getFieldsInfo()
 {
     //tem uma maneira mais fácil de fazer isso mas ja ta tarde tenho que dormir
@@ -122,6 +74,28 @@ function getFieldsInfoArray()
     return $arrayFields;
 }
 
+function getTentativasInfoArray(){
+    $array = array();
+
+    
+    $conexao = conectar();
+    $sql = "SELECT max(tentativa) AS resp FROM master;";
+    $result = mysqli_query($conexao, $sql);
+    $i = mysqli_fetch_assoc($result);
+    $i = $i["resp"];
+
+    $a= 0;
+    while($a < $i){
+        $a++;
+        if(isset($_GET["tentativa$a"])){
+            if($_GET["tentativa$a"] == "on") array_push($array, $a);
+        }
+    }
+
+    return $array;
+
+}
+
 
 function generateString($tentativasArray)
 {
@@ -143,7 +117,8 @@ function generateString($tentativasArray)
     $result = mysqli_query($conexao, $sql);
 
     while ($registro = mysqli_fetch_assoc($result)) {
-        $string .= "'" . $registro["tempo"] . "', ";
+        //valor padrao do resultado: 2020-02-26 00:00:00.001
+        $string .= "'" . substr($registro["tempo"], -5) . "s', ";
     }
 
     $string = substr($string, 0, -2);

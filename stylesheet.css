@@ -1,5 +1,5 @@
 body {
-    padding: 16px;
+    padding: 5px;
 }
 
 .clearfix {
@@ -22,7 +22,7 @@ body {
 .control {
     position: relative;
     margin: auto;
-    width: 80vw;
+    width: 99vw;
 }
 
 .control fieldset {
@@ -40,4 +40,18 @@ body {
 
 #rmDataset {
     display: none;
+}
+
+.controls {
+    float: right;
+    max-width: 10pc;
+}
+
+.controls input {
+    width: 9pc;
+    margin: 2px;
+}
+
+fieldset {
+    height: 8pc;
 }

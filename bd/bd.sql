@@ -41,13 +41,16 @@ SELECT MAX(tentativa) FROM master;
 SELECT MIN(tempo) FROM master WHERE tentativa = 1;
 SELECT TIMESTAMPDIFF(MICROSECOND, (SELECT MAX(tempo) FROM master WHERE tentativa = 1) , (SELECT MIN(tempo) FROM master WHERE tentativa = 1)) / 1000;
 SELECT CAST('2020-02-26 00:00:00.001' AS TIME);
-SELECT COUNT(tempo) from master WHERE tentativa = '1';
+SELECT MAX(tempo) FROM master WHERE tentativa = 1;
+SELECT timestampdiff(microsecond, (select cast('2020-02-26 00:00:00.009' AS TIME)), '00:00:02') / 1000;
+SELECT COUNT(tempo) AS coiso FROM master WHERE tentativa = '1';
+select max(tentativa) from master;
 
-
+select cast((SELECT MAX(tempo) FROM master WHERE tentativa = 1) AS TIME);
 DELETE FROM master WHERE id IS NOT NULL;
 SELECT DISTINCT tentativa AS numtent FROM master;
 
-select * from master;
+select * AS coiso from master;
 
 INSERT INTO master VALUES('1', '1', '2020-02-26 12:39:16:121', '1', '1', '1', '1', '1', '1', '1', '1', '1');
 

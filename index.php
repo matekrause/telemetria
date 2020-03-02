@@ -13,9 +13,10 @@
     <?php
     include_once "bd/conexaobd.php";
     include_once "gerarDados.php";
+    include_once "data.php";
 
     //-------------------------------------
-    $data = new data();
+    $data = new Data();
     $data->createData(); //gerar o treco funcionante com ou sem dados de exemplo
     //-------------------------------------
 
@@ -31,6 +32,7 @@
                 <?php
                 $resultsInfo = getFieldsInfo();
                 $resultsInfoArray = getFieldsInfoArray();
+
                 ?>
 
                 <!-- atualmente mostrando apenas erro acumulado -->
@@ -106,13 +108,20 @@
 
                     if (intval($tempo / 4) == 0) {
                     }
-
                     ?>
 
                 </div>
             </fieldset>
-            <fieldset style="margin-left: 1pc;">
+            <fieldset style="margin-left: 1pc">
                 <legend>Linha do tempo</legend>
+                <div>
+                    <input type="radio" id="contactChoice1" name="contact" value="email">
+                    <label for="contactChoice1">Tempo (s)</label>
+
+                    <input type="radio" id="contactChoice2" name="contact" value="phone">
+                    <label for="contactChoice2">Setor</label>
+                </div>
+                <br>
                 <div style="width: 100%;" class="clearfix">
                     <div class="float-left">
                         <div>
@@ -131,14 +140,15 @@
                         </div>
                     </div>
                 </div>
-                <div>
-                    <br>
-                    <input type="button" value="Resetar">
+            </fieldset>
+            <fieldset style="margin-left: 1pc;">
+                <legend>coiso</legend>
+                <div class="controls">
+                    <input type="button" value="Tela Cheia">
+                    <input type="reset" value="Resetar"><br>
+                    <input type="submit" value="Gerar">
                 </div>
             </fieldset>
-            <div style="margin-top: 10px;" class="clearfix float-left">
-                <input type="submit" value="Atualizar">
-            </div>
         </form>
     </div>
 
@@ -157,6 +167,27 @@
     $string = generateString($tentativasArray);
     $qntString = stringCount($tentativasArray);
     $qntArrays = arraysCount($data);
+
+    //coisos pro setor
+    $resultsTentativaInfoArray = getTentativasInfoArray();
+    $maxValue = $data->maxValue;
+
+    if (count($resultsTentativaInfoArray) == 1) {
+        $conexao = conectar();
+        $sql = "SELECT setor AS setor FROM master WHERE tentativa = '$resultsTentativaInfoArray[0]'";
+        $result = mysqli_query($conexao, $sql);
+        $setorOrderByTime = [];
+        while ($registro = mysqli_fetch_assoc($result)) {
+            array_push($setorOrderByTime, $registro["setor"]);
+        }
+    }else{
+        echo "Não é possível!!!!";
+    }
+
+    print_r($setorOrderByTime);
+    echo "<br>";
+
+
     $data = $data->getData();
 
     ?>
@@ -194,14 +225,68 @@
 
                     echo "]}";
 
-                    if ($q != $qntArrays - 1) {
+                    if ($q != $qntArrays /*- 1*/) {
                         echo ",";
                     }
                 }
 
+
+                //tentar realmente usar metodo do array::
+                $last = 0;
+                $first = true;
+                $num = 0;
+                foreach($setorOrderByTime as $setor){
+                    $pass = false;
+                    if($last != $setor){
+                        if($first == false){
+                            echo "
+                                ]},
+                            ";
+                        }
+                        $r = rand(10,255);
+                        $g = rand(10,255);
+                        $b = rand(10,255);
+                        echo "
+                            {
+                                label: 'Setor $setor',
+                                fill: true,
+                                lineTension: 0,
+                                showLine: true,
+                                backgroundColor: 'rgba($r, $g, $b, .1)',
+                                borderWidth: .1,
+                                pointRadius: 0,
+                                pointBorderWidth: 0,
+                                data:[
+                        ";
+                        for($i = 0; $i < $num; $i++){
+                            echo " ,";
+                        }
+                        $last = $setor;
+
+                        echo $maxValue;
+                        $pass = true;
+                    }
+
+                    if($first != true){
+                        echo ",";
+                    }
+                    if($pass == false){
+                        echo $maxValue;
+                    }
+
+                    $first = false;
+                    $num++;
+                }
+
+                echo "
+                    ]}
+                ";
+
+
                 ?>
             ]
         };
+
 
         var options = {
             maintainAspectRatio: false,
@@ -229,6 +314,10 @@
             data: data
         });
     </script>
+
+    <?php
+    echo $maxValue;
+    ?>
 
 </body>
 
