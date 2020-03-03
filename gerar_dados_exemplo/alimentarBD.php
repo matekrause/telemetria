@@ -9,7 +9,7 @@
 
 <body>
     <?php
-    include "bd/conexaobd.php";
+    include "../bd/conexaobd.php";
 
     $conexao = conectar();
 
@@ -37,6 +37,9 @@
         return $setor;
     }
 
+    // implementar PERLIN NOISE !!!!
+    // https://gist.github.com/dazld/2173820
+    
     for ($tempo = 1; $tempo <= 9; $tempo++) {
         $tempoComplete = date("Y-m-d") . " 00:00:00.00" . $tempo;
         $values = "('" . $tentativa . "', '" . $tempoComplete . "', '" . gerarSetor($tempo) . "', '"

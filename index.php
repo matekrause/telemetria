@@ -15,146 +15,142 @@
     include_once "gerarDados.php";
     include_once "data.php";
 
-    //-------------------------------------
     $data = new Data();
-    //-------------------------------------
 
     ?>
 
     <script src="node_modules/chart.js/dist/Chart.js"></script>
 
-    <div class="control clearfix">
-        <form action="index.php" method="get">
+    <div class="clearfix top-container" id="top-container">
+        <div class="control clearfix">
+            <form action="index.php" method="get">
 
-            <fieldset>
-                <legend>Informações eixo Y</legend>
-                <?php
-                $resultsInfo = getFieldsInfo();
-                $resultsInfoArray = getFieldsInfoArray();
-
-                ?>
-
-                <!-- atualmente mostrando apenas erro acumulado -->
-
-                <div style="width: 100%;">
-                    <div class="float-left">
-                        <input type="checkbox" id="1a" name="velocidadeDesejada" <?php echo $resultsInfo["velocidadeDesejada"] ?>>
-                        <label for="1a">Velocidade Desejada</label> <br>
-                        <input type="checkbox" id="2a" name="velocidadeMotorEsquerdo" <?php echo $resultsInfo["velocidadeMotorEsquerdo"] ?>>
-                        <label for="2a">Velocidade Motor Esquerdo</label> <br>
-                        <input type="checkbox" id="3a" name="velocidadeMotorDireito" <?php echo $resultsInfo["velocidadeMotorDireito"] ?>>
-                        <label for="3a">Velocidade Motor Direito</label> <br>
-                        <input type="checkbox" id="4a" name="erroAcumulado" <?php echo $resultsInfo["erroAcumulado"] ?>>
-                        <label for="4a">Erro Acumulado</label>
-                    </div>
-                    <div class="float-left">
-                        <input type="checkbox" id="5a" name="erro" <?php echo $resultsInfo["erro"] ?>>
-                        <label for="5a">Erro</label> <br>
-                        <input type="checkbox" id="6a" name="p" <?php echo $resultsInfo["p"] ?>>
-                        <label for="6a">P</label> <br>
-                        <input type="checkbox" id="7a" name="d" <?php echo $resultsInfo["d"] ?>>
-                        <label for="7a">D</label> <br>
-                        <input type="checkbox" id="8a" name="i" <?php echo $resultsInfo["i"] ?>>
-                        <label for="8a">I</label> <br>
-                    </div>
-                </div>
-            </fieldset>
-            <?php
-            ?>
-            <fieldset style="margin-left: 1pc;">
-                <legend>Tentativas</legend>
-                <div style="width: 100%;">
-
+                <fieldset>
+                    <legend>Informações eixo Y</legend>
                     <?php
-                    $conexao = conectar();
+                    $resultsInfo = getFieldsInfo();
+                    $resultsInfoArray = getFieldsInfoArray();
 
-                    $sql = "SELECT DISTINCT tentativa AS numtent FROM master";
-                    $result = mysqli_query($conexao, $sql);
+                    ?>
 
-                    $count = 0;
+                    <div style="width: 100%;">
+                        <div class="float-left">
+                            <input type="checkbox" id="1a" name="velocidadeDesejada" <?php echo $resultsInfo["velocidadeDesejada"] ?>>
+                            <label for="1a">Velocidade Desejada</label> <br>
+                            <input type="checkbox" id="2a" name="velocidadeMotorEsquerdo" <?php echo $resultsInfo["velocidadeMotorEsquerdo"] ?>>
+                            <label for="2a">Velocidade Motor Esquerdo</label> <br>
+                            <input type="checkbox" id="3a" name="velocidadeMotorDireito" <?php echo $resultsInfo["velocidadeMotorDireito"] ?>>
+                            <label for="3a">Velocidade Motor Direito</label> <br>
+                            <input type="checkbox" id="4a" name="erroAcumulado" <?php echo $resultsInfo["erroAcumulado"] ?>>
+                            <label for="4a">Erro Acumulado</label>
+                        </div>
+                        <div class="float-left">
+                            <input type="checkbox" id="5a" name="erro" <?php echo $resultsInfo["erro"] ?>>
+                            <label for="5a">Erro</label> <br>
+                            <input type="checkbox" id="6a" name="p" <?php echo $resultsInfo["p"] ?>>
+                            <label for="6a">P</label> <br>
+                            <input type="checkbox" id="7a" name="d" <?php echo $resultsInfo["d"] ?>>
+                            <label for="7a">D</label> <br>
+                            <input type="checkbox" id="8a" name="i" <?php echo $resultsInfo["i"] ?>>
+                            <label for="8a">I</label> <br>
+                        </div>
+                    </div>
+                </fieldset>
+                <?php
+                ?>
+                <fieldset style="margin-left: 1pc;">
+                    <legend>Tentativas</legend>
+                    <div style="width: 100%;">
 
-                    if (mysqli_num_rows($result) == 0) {
-                        echo 'Não há dados cadastrados.';
-                    }
+                        <?php
+                        $conexao = conectar();
 
-                    echo "<div class='float-left'>";
+                        $sql = "SELECT DISTINCT tentativa AS numtent FROM master";
+                        $result = mysqli_query($conexao, $sql);
 
-                    $tentativasArray = array();
+                        $count = 0;
 
-                    while ($registro = mysqli_fetch_assoc($result)) {
-                        $count++;
-
-                        $id = $registro['numtent'];
-                        $tentCheck = $_GET["tentativa$id"];
-                        if ($tentCheck != "") {
-                            $tentCheck = "checked";
-                            array_push($tentativasArray, $id);
-                            $data->addData($id, $resultsInfoArray); //adiciona a info da tent no array
+                        if (mysqli_num_rows($result) == 0) {
+                            echo 'Não há dados cadastrados.';
                         }
 
-                        echo "
+                        echo "<div class='float-left'>";
+
+                        $tentativasArray = array();
+
+                        while ($registro = mysqli_fetch_assoc($result)) {
+                            $count++;
+
+                            $id = $registro['numtent'];
+                            $tentCheck = $_GET["tentativa$id"];
+                            if ($tentCheck != "") {
+                                $tentCheck = "checked";
+                                array_push($tentativasArray, $id);
+                                $data->addData($id, $resultsInfoArray); //adiciona a info da tent no array
+                            }
+
+                            echo "
                         <input type='checkbox' id='$id' name='tentativa$id' $tentCheck>
                         <label for='$id'>Tentativa $id</label> <br>
                         ";
 
-                        if (($count % 4) == 0) {
-                            echo "
+                            if (($count % 4) == 0) {
+                                echo "
                             </div>
                             <div class='float-left'>
                             ";
+                            }
                         }
-                    }
 
-                    if (intval($tempo / 4) == 0) {
-                    }
-                    ?>
+                        if (intval($tempo / 4) == 0) {
+                        }
+                        ?>
 
-                </div>
-            </fieldset>
-            <fieldset style="margin-left: 1pc">
-                <legend>Linha do tempo</legend>
-                <div>
-                    <input type="radio" id="contactChoice1" name="contact" value="email">
-                    <label for="contactChoice1">Tempo (s)</label>
+                    </div>
+                </fieldset>
+                <fieldset style="margin-left: 1pc">
+                    <legend>Linha do tempo</legend>
+                    <div>
+                        <input type="radio" id="contactChoice1" name="contact" value="email">
+                        <label for="contactChoice1">Tempo (s)</label>
 
-                    <input type="radio" id="contactChoice2" name="contact" value="phone">
-                    <label for="contactChoice2">Setor</label>
-                </div>
-                <br>
-                <div style="width: 100%;" class="clearfix">
-                    <div class="float-left">
-                        <div>
-                            <label for="start">Iniciar em: </label>
+                        <input type="radio" id="contactChoice2" name="contact" value="phone">
+                        <label for="contactChoice2">Setor</label>
+                    </div>
+                    <br>
+                    <div style="width: 100%;" class="clearfix">
+                        <div class="float-left">
+                            <div>
+                                <label for="start">Iniciar em: </label>
+                            </div>
+                            <div>
+                                <label for="start">Terminar em: </label>
+                            </div>
                         </div>
-                        <div>
-                            <label for="start">Terminar em: </label>
+                        <div class="float-left">
+                            <div>
+                                <input type="number" step="0.00001" id="start"> <br>
+                            </div>
+                            <div>
+                                <input type="number" step="0.00001" id="finish">
+                            </div>
                         </div>
                     </div>
-                    <div class="float-left">
-                        <div>
-                            <input type="number" step="0.00001" id="start"> <br>
-                        </div>
-                        <div>
-                            <input type="number" step="0.00001" id="finish">
-                        </div>
+                </fieldset>
+                <fieldset style="margin-left: 1pc;">
+                    <legend>Opção</legend>
+                    <div class="controls">
+                        <input type="button" value="Tela Cheia" onclick="fullscreen()">
+                        <input type="reset" value="Resetar"><br>
+                        <input type="submit" value="Gerar">
                     </div>
-                </div>
-            </fieldset>
-            <fieldset style="margin-left: 1pc;">
-                <legend>coiso</legend>
-                <div class="controls">
-                    <input type="button" value="Tela Cheia">
-                    <input type="reset" value="Resetar"><br>
-                    <input type="submit" value="Gerar">
-                </div>
-            </fieldset>
-        </form>
+                </fieldset>
+            </form>
+        </div>
     </div>
-
-
     <br><br>
 
-    <div class="chart-container">
+    <div class="chart-container" id="canvas">
         <canvas id="chart"></canvas>
     </div>
 
@@ -179,12 +175,12 @@
         while ($registro = mysqli_fetch_assoc($result)) {
             array_push($setorOrderByTime, $registro["setor"]);
         }
-    }else{
+    } else {
         echo "Não é possível!!!!";
     }
 
-    print_r($setorOrderByTime);
-    echo "<br>";
+    //print_r($setorOrderByTime);
+    //echo "<br>";
 
 
     $data = $data->getData();
@@ -234,17 +230,17 @@
                 $last = 0;
                 $first = true;
                 $num = 0;
-                foreach($setorOrderByTime as $setor){
+                foreach ($setorOrderByTime as $setor) {
                     $pass = false;
-                    if($last != $setor){
-                        if($first == false){
+                    if ($last != $setor) {
+                        if ($first == false) {
                             echo "
                                 ]},
                             ";
                         }
-                        $r = rand(10,255);
-                        $g = rand(10,255);
-                        $b = rand(10,255);
+                        $r = rand(10, 255);
+                        $g = rand(10, 255);
+                        $b = rand(10, 255);
                         echo "
                             {
                                 label: 'Setor $setor',
@@ -257,7 +253,7 @@
                                 pointBorderWidth: 0,
                                 data:[
                         ";
-                        for($i = 0; $i < $num; $i++){
+                        for ($i = 0; $i < $num; $i++) {
                             echo " ,";
                         }
                         $last = $setor;
@@ -266,10 +262,10 @@
                         $pass = true;
                     }
 
-                    if($first != true){
+                    if ($first != true) {
                         echo ",";
                     }
-                    if($pass == false){
+                    if ($pass == false) {
                         echo $maxValue;
                     }
 
@@ -314,8 +310,32 @@
         });
     </script>
 
+    <script>
+        let elem = document.getElementById("canvas");
+
+        function fullscreen() {
+            openFullscreen();
+            document.getElementById("canvas").style.backgroundcolor = "white";
+        }
+
+        function openFullscreen() {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                /* Firefox */
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) {
+                /* Chrome, Safari and Opera */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                /* IE/Edge */
+                elem.msRequestFullscreen();
+            }
+        }
+    </script>
+
     <?php
-    echo $maxValue;
+    // echo $maxValue;
     ?>
 
 </body>

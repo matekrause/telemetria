@@ -1,5 +1,7 @@
 body {
     padding: 5px;
+    background-attachment: fixed;
+    background-color: white;
 }
 
 .clearfix {
@@ -15,14 +17,21 @@ body {
 .chart-container {
     position: relative;
     margin: auto;
-    height: 60vh;
-    width: 80vw;
+    height: 63vh;
+    width: 95vw;
+}
+
+.chart-container:fullscreen {
+    background-color: white;
 }
 
 .control {
     position: relative;
     margin: auto;
-    width: 99vw;
+    width: auto;
+    overflow: hidden;
+    display: inline-block;
+    text-align: left;
 }
 
 .control fieldset {
@@ -54,4 +63,8 @@ body {
 
 fieldset {
     height: 8pc;
+}
+
+.top-container {
+    text-align: center;
 }
