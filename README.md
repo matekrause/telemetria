@@ -1,5 +1,5 @@
 # telemetria
-Sistema PHP que cria gráficos utilizando ChartJS sobre base de dados SQL.
+Sistema PHP que cria gráficos utilizando ChartJS sobre base de dados SQL. Feito para auxiliar a visualização de informações de log dos robôs de corrida da equipe Titãs da Robótica do IFES Colatina.
 
 ![Screenshot from 2020-02-28 00-35-07](https://user-images.githubusercontent.com/47651648/88870113-eb646880-d1ea-11ea-87cf-a647b78a062b.png)
 
